@@ -1,211 +1,340 @@
-# Reinforcement Learning for Autonomous Navigation
+# Big Data Analysis of Social Deprivation and Avoidable Mortality
 
 ## Overview
 
-This project demonstrates the implementation of a **Q-Learning Reinforcement Learning agent** capable of autonomously navigating a custom 5×5 Grid World environment. The agent learns an optimal navigation policy through trial-and-error interactions, balancing exploration and exploitation using an epsilon-greedy strategy.
+This project investigates the relationship between **social deprivation** and **avoidable mortality rates in England** using a Big Data analytics pipeline built with Hadoop, Apache Spark, and Apache Zeppelin.
 
-The environment contains obstacles, a teleportation state, and a goal state with rewards. Through continuous training, the agent learns the most efficient path to maximize cumulative rewards while minimizing unnecessary actions.
-
----
-
-## Features
-
-* Custom 5×5 Grid World environment
-* Q-Learning implementation from scratch
-* Epsilon-Greedy exploration strategy
-* Dynamic exploration decay
-* Obstacle-aware path planning
-* Teleportation transition state
-* State-Action Value (Q-Table) visualization
-* Learned policy and value heatmap generation
-* Training performance monitoring
-* Reward and efficiency analysis
+The study combines deprivation and mortality datasets to identify whether socioeconomic inequalities are associated with higher rates of preventable deaths. By leveraging distributed storage and processing technologies, the project demonstrates how Big Data tools can be used to uncover meaningful public health insights.
 
 ---
 
-## Problem Description
+## Project Objective
 
-The agent must navigate a constrained environment and reach the goal state while maximizing rewards.
+To determine:
 
-### Environment Configuration
+> **Is there a significant relationship between social deprivation and avoidable mortality in England?**
 
-* Grid Size: 5 × 5
-* Start State: (1, 0)
-* Goal State: (4, 4)
-* Teleport State: (1, 3) → (3, 3)
-* Obstacles:
-
-  * (2,2)
-  * (2,3)
-  * (3,2)
-  * (2,4)
-
-### Available Actions
-
-* Up
-* Down
-* Left
-* Right
+The project analyzes deprivation scores and mortality rates across deprivation deciles and evaluates their correlation using large-scale data processing techniques.
 
 ---
 
-## Reinforcement Learning Approach
+## Key Findings
 
-### Q-Learning
-
-Q-Learning is a model-free reinforcement learning algorithm that learns the optimal action-value function:
-
-```text
-Q(s,a) ← Q(s,a) + α [r + γ max Q(s',a') − Q(s,a)]
-```
-
-Where:
-
-* Q(s,a) = Action value
-* α = Learning Rate
-* γ = Discount Factor
-* r = Immediate Reward
-* s' = Next State
+* Strong positive correlation between deprivation and avoidable mortality (**r ≈ 0.998**)
+* Mortality rate in the most deprived areas was approximately **3.8 times higher** than in the least deprived areas
+* High-deprivation communities experienced significantly greater avoidable mortality burdens
+* Findings highlight substantial health inequalities across England
 
 ---
 
-## Exploration Strategy
+## Dataset Information
 
-The agent uses an **Epsilon-Greedy Policy**:
+### 1. English Indices of Deprivation (IMD 2019)
 
-* Random exploration with probability ε
-* Greedy action selection with probability (1 − ε)
+Source: UK Government
 
-### Epsilon Decay
+**Dataset Size**
 
-```text
-Initial ε = 1.0
-Minimum ε = 0.01
-```
+* 32,844 records
 
-This allows the agent to explore early and exploit learned knowledge later in training.
+**Key Attributes**
+
+* IMD Score
+* IMD Decile
+* Income Deprivation
+* Health Deprivation
+* Education Deprivation
+
+### 2. Avoidable Mortality Dataset (ONS 2020)
+
+Source: Office for National Statistics (ONS)
+
+**Dataset Size**
+
+* 32,844 records
+
+**Key Attributes**
+
+* Mortality Rate
+* Deprivation Decile
+* Avoidable Death Statistics
+* Geographic Indicators
 
 ---
 
-## Hyperparameters
+## Technology Stack
 
-| Parameter           | Value |
-| ------------------- | ----- |
-| Learning Rate (α)   | 0.1   |
-| Discount Factor (γ) | 0.9   |
-| Initial Epsilon     | 1.0   |
-| Minimum Epsilon     | 0.01  |
-| Training Episodes   | 300   |
+### Big Data Storage
 
----
+* Hadoop Distributed File System (HDFS)
 
-## Technologies Used
+### Data Processing
+
+* Apache Spark
+* PySpark
+
+### Data Analysis
 
 * Python
-* NumPy
-* Matplotlib
-* Reinforcement Learning
-* Q-Learning
-* Object-Oriented Programming
+* Spark SQL
+
+### Data Visualization
+
+* Apache Zeppelin
+
+### Environment
+
+* Docker
+
+---
+
+## System Architecture
+
+```text id="2k8vpf"
+Raw Datasets
+      │
+      ▼
+ Hadoop HDFS Storage
+      │
+      ▼
+ Apache Spark Processing
+      │
+      ├── Data Cleaning
+      ├── Aggregation
+      ├── Transformation
+      └── Correlation Analysis
+      │
+      ▼
+ Processed Dataset
+ (deprivation_mortality.csv)
+      │
+      ▼
+ Apache Zeppelin
+      │
+      ▼
+ Visualizations & Insights
+```
+
+---
+
+## Data Processing Pipeline
+
+### Step 1: Data Ingestion
+
+* Imported datasets into Docker environment
+* Loaded datasets into Hadoop HDFS
+* Verified distributed storage availability
+
+### Step 2: Data Cleaning
+
+#### IMD Dataset
+
+* Selected deprivation score and decile columns
+* Removed unnecessary attributes
+* Generated cleaned dataset
+
+#### Mortality Dataset
+
+* Filtered records for:
+
+  * Year 2020
+  * Avoidable Mortality category
+* Generated cleaned mortality dataset
+
+### Step 3: Data Aggregation
+
+Calculated:
+
+* Mean IMD Score by Decile
+* Average Mortality Rate by Decile
+
+### Step 4: Data Integration
+
+Joined datasets using:
+
+```text id="q0u9b6"
+IMD_Decile
+```
+
+Generated:
+
+```text id="5o0xy0"
+deprivation_mortality.csv
+```
+
+### Step 5: Correlation Analysis
+
+Computed Pearson Correlation:
+
+```text id="ikbhmv"
+Correlation = 0.99812
+```
+
+---
+
+## Analysis Performed
+
+### Correlation Analysis
+
+Examined the relationship between:
+
+* Social Deprivation Score
+* Avoidable Mortality Rate
+
+Result:
+
+* Extremely strong positive relationship
+* Higher deprivation associated with higher mortality
+
+### Mortality Gap Analysis
+
+Compared:
+
+* Most Deprived Areas
+* Least Deprived Areas
+
+Result:
+
+```text id="8k1a8i"
+Most Deprived: 522.45 deaths per 100,000
+Least Deprived: 139 deaths per 100,000
+Difference: 3.8x
+```
+
+### Deprivation Category Analysis
+
+Grouped areas into:
+
+* High Deprivation
+* Medium Deprivation
+* Low Deprivation
+
+Compared mortality burden across categories.
+
+### Cumulative Burden Analysis
+
+Measured how avoidable mortality accumulates across deprivation deciles.
+
+---
+
+## Visualizations
+
+The project includes multiple visual analytics generated in Apache Zeppelin:
+
+* Scatter Plot (Deprivation vs Mortality)
+* Mortality by Decile Bar Charts
+* Pie Charts by Deprivation Category
+* Stacked Comparison Charts
+* Cumulative Mortality Analysis
+
+These visualizations clearly demonstrate the relationship between deprivation and mortality.
 
 ---
 
 ## Project Structure
 
-```text
-Reinforcement-Learning-GridWorld/
+```text id="ll1e4y"
+BigData-Deprivation-Mortality/
 │
-├── src/
-│   ├── environment.py
-│   ├── q_learning_agent.py
-│   ├── train.py
-│   └── visualization.py
+├── data/
+│   ├── raw/
+│   │   ├── imd2019.csv
+│   │   └── ons2020.csv
+│   │
+│   ├── processed/
+│   │   ├── imd_cleaned.csv
+│   │   ├── ons2020_cleaned.csv
+│   │   └── deprivation_mortality.csv
 │
-├── outputs/
-│   ├── reward_curve.png
-│   ├── efficiency_curve.png
-│   ├── policy_heatmap.png
-│   └── value_map.png
+├── scripts/
+│   ├── clean_imd.py
+│   ├── clean_ons.py
+│   └── analyze_deprivation_mortality.py
 │
-├── requirements.txt
-└── README.md
+├── notebooks/
+│   └── zeppelin_analysis.zpln
+│
+├── visualizations/
+│
+├── README.md
+└── requirements.txt
+```
+
+---
+
+## Running the Project
+
+### Start Hadoop Environment
+
+```bash id="97e6r4"
+docker start sandbox-hdp
+```
+
+### Upload Data to HDFS
+
+```bash id="cbh5ot"
+hdfs dfs -put data/raw/* /user/project/data/raw/
+```
+
+### Run Spark Processing
+
+```bash id="t0u5w6"
+spark-submit scripts/analyze_deprivation_mortality.py
+```
+
+### Open Zeppelin
+
+```bash id="pjr90n"
+http://localhost:8080
 ```
 
 ---
 
 ## Results
 
-### Learning Performance
-
-The agent demonstrated three learning phases:
-
-#### Phase 1 – Exploration
-
-* Random actions dominate.
-* Rewards fluctuate significantly.
-* Frequent collisions and inefficient paths.
-
-#### Phase 2 – Learning
-
-* Agent discovers high-value states.
-* Cumulative rewards steadily increase.
-* Path efficiency improves.
-
-#### Phase 3 – Convergence
-
-* Stable policy emerges.
-* Agent consistently reaches the goal.
-* Near-optimal navigation achieved.
+| Metric                  | Value   |
+| ----------------------- | ------- |
+| Correlation Coefficient | 0.99812 |
+| Highest Mortality Rate  | 522.45  |
+| Lowest Mortality Rate   | 139.00  |
+| Mortality Difference    | 3.8×    |
+| Dataset Records         | 32,844  |
 
 ---
 
-## Key Outcomes
+## Limitations
 
-* Successfully learned optimal navigation policy.
-* Adapted to obstacles and teleportation mechanics.
-* Reduced average steps per episode throughout training.
-* Generated interpretable policy and value visualizations.
-* Demonstrated convergence of Q-values and stable learning behavior.
-
----
-
-## Visualizations
-
-The project generates:
-
-* Cumulative Reward Curve
-* Average Steps per Episode
-* Learned Policy Heatmap
-* State Value Map
-* Optimal Path Visualization
-
-These visualizations provide insight into the learning process and final decision-making strategy.
+* Analysis restricted to 2020 mortality data
+* Data aggregated to decile level
+* Loss of Local Super Output Area (LSOA) detail
+* Limited chart customization in Zeppelin
 
 ---
 
 ## Future Improvements
 
-* Implement SARSA for algorithm comparison
-* Expand environment size (10×10, 20×20)
-* Introduce dynamic obstacles
-* Implement Deep Q-Networks (DQN)
-* Add Double DQN and Dueling DQN architectures
-* Support continuous state spaces
-* Develop interactive visualization dashboard
+* Include multi-year mortality datasets
+* Perform time-series trend analysis
+* Integrate regional mapping visualizations
+* Use Tableau or Power BI for interactive dashboards
+* Apply machine learning models for mortality prediction
+* Analyze additional socioeconomic indicators
 
 ---
 
 ## Learning Outcomes
 
-This project demonstrates practical understanding of:
+This project demonstrates practical experience with:
 
-* Reinforcement Learning fundamentals
-* Markov Decision Processes (MDPs)
-* Exploration vs Exploitation trade-off
-* Q-Learning algorithms
-* Policy optimization
-* Reward-based learning systems
-* Autonomous agent navigation
+* Big Data Analytics
+* Hadoop Ecosystem
+* Apache Spark
+* Distributed Data Processing
+* Data Engineering Pipelines
+* Correlation Analysis
+* Public Health Data Analysis
+* Data Visualization
+* Python and PySpark
 
 ---
 
